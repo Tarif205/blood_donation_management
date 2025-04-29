@@ -14,9 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
     $availibility = $_POST["is_available"];
     $sql = "INSERT INTO donors (Donors_name,password,Age, Blood_type,Contract_number,Email,Last_donation_date,Health_issues,Health_issues_details,is_Available) 
             VALUES ('$name','$password','$age','$blood_type','$number','$email','$last_donation_date','$health_issues','$health_issues_details','$availibility')";
-    // $stmt = $conn->prepare($sql);
-    // $stmt->bind_param("sssssss", $name, $email, $password, $blood_type, $rh_factor, $last_donation_date, $health_issues);
-    // $stmt->execute();
+
     try {
         if (mysqli_query($conn, $sql)) {
             echo "Donor registered successfully! <a href='donor_login.php'>Login Now</a>";
@@ -26,8 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
     } catch (mysqli_sql_exception $e) {
         echo "Exception occurred: " . $e->getMessage();
     }
-    
-    // echo "Donor registered successfully! <a href='donor_login.php'>Login Now</a>";   
+     
 }
 ?>
 <!DOCTYPE html>
