@@ -2,7 +2,7 @@
     $db_server="localhost";
     $db_user="root";
     $db_pass="";
-    $db_name="blood_donation_management";
+    $db_name="blood_donation_management_system";
     $conn="";
 
 
