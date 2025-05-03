@@ -41,7 +41,7 @@ $requests_sql = "SELECT r.Request_ID, u.Name AS patient_name, u.Phone_Number, r.
                 FROM Blood_Request r
                 JOIN USER u ON r.Patient_ID = u.ID
                 JOIN Requested_Blood_Type b ON r.Request_ID = b.Request_ID
-                WHERE b.Blood_Type = '$blood_type'";
+                WHERE b.Blood_Type = '$blood_type' AND r.Patient_ID != $user_id "; // Exclude the current user from the results
 $requests = mysqli_query($conn, $requests_sql);
 ?>
 
