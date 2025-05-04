@@ -1,5 +1,6 @@
-<?php
 // FILE: user_dashboard.php
+
+<?php 
 include 'database.php';
 session_start();
 
@@ -36,16 +37,39 @@ $health_result = mysqli_query($conn, $health_sql);
 $health_row = mysqli_fetch_assoc($health_result);
 $health_issues = $health_row['has_issues'] > 0 ? 'Yes' : 'No';
 
+// Get current availability
+$avail_sql = "SELECT Is_Available FROM USER WHERE ID = $user_id";
+$avail_result = mysqli_query($conn, $avail_sql);
+$avail_row = mysqli_fetch_assoc($avail_result);
+$is_available = $avail_row['Is_Available'] ?? 0;
+
+// Handle availability toggle
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggle_availability'])) {
+    $new_status = $is_available ? 0 : 1;
+    $update_sql = "UPDATE USER SET Is_Available = $new_status WHERE ID = $user_id";
+    mysqli_query($conn, $update_sql);
+    $is_available = $new_status;
+}
+
 // Matching blood requests
 $requests_sql = "SELECT r.Request_ID, u.Name AS patient_name, u.Phone_Number, r.Time_Stamp
-                FROM Blood_Request r
-                JOIN USER u ON r.Patient_ID = u.ID
-                JOIN Requested_Blood_Type b ON r.Request_ID = b.Request_ID
-                WHERE b.Blood_Type = '$blood_type' AND r.Patient_ID != $user_id "; // Exclude the current user from the results
+    FROM Blood_Request r
+    JOIN USER u ON r.Patient_ID = u.ID
+    JOIN Eligibility_Check e ON r.Request_ID = e.Request_ID
+    WHERE e.Donor_ID = $user_id
+      AND e.is_eligible = 1
+      AND EXISTS (
+          SELECT 1 FROM USER d WHERE d.ID = e.Donor_ID AND d.Is_Available = 1
+      )
+    ORDER BY r.Time_Stamp DESC";
+
+// $requests_sql = "SELECT r.Request_ID, u.Name AS patient_name, u.Phone_Number, r.Time_Stamp
+//                 FROM Blood_Request r
+//                 JOIN USER u ON r.Patient_ID = u.ID
+//                 JOIN Requested_Blood_Type b ON r.Request_ID = b.Request_ID
+//                 WHERE b.Blood_Type = '$blood_type' AND r.Patient_ID != $user_id ";
 $requests = mysqli_query($conn, $requests_sql);
 ?>
-
-
 
 <!DOCTYPE html>
 <html>
@@ -57,13 +81,21 @@ $requests = mysqli_query($conn, $requests_sql);
     <p><strong>Blood Type:</strong> <?php echo $blood_type; ?></p>
     <p><strong>Health Issues:</strong> <?php echo $health_issues; ?></p>
     <p><strong>Days Since Last Donation:</strong> <?php echo $days_since; ?></p>
+    <p><a href="donation_history.php">View Donation History</a></p>
     <p><a href="user_login.php">Logout</a></p>
+
+    <form method="post" style="margin-top: 10px;">
+        <p>
+            <label><strong>Availability:</strong></label>
+            <input type="submit" name="toggle_availability" value="<?php echo $is_available ? 'Mark as Unavailable' : 'Mark as Available'; ?>">
+            <span style="margin-left:10px;"><?php echo $is_available ? '✅ Available' : '❌ Unavailable'; ?></span>
+        </p>
+    </form>
 
     <form action="blood_request.php" method="post" style="margin-top: 20px;">
         <input type="hidden" name="auto_request" value="1">
         <input type="submit" value="Send Blood Request">
     </form>
-
 
     <hr>
     <h3>Matching Blood Requests</h3>
@@ -80,3 +112,11 @@ $requests = mysqli_query($conn, $requests_sql);
     <?php endif; ?>
 </body>
 </html>
+
+
+
+
+
+
+
+
