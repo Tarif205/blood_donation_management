@@ -80,7 +80,7 @@ if (mysqli_query($conn, $req_sql)) {
         mysqli_query($conn, $elig_sql);
     }
 
-    header("Location: user_dashboard.php?msg=Request sent successfully");
+    header("Location: user_dashboard.php?msg1=Request sent successfully");
     exit();
 } else {
     echo "Error: " . mysqli_error($conn);

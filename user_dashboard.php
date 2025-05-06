@@ -3,6 +3,13 @@
 <?php 
 include 'database.php';
 session_start();
+$status = $_GET['status'] ?? '';
+
+$flash_message = '';
+if ($status === 'accepted') {
+    $flash_message = '✅ Request accepted successfully.';
+}
+
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: user_login.php");
@@ -78,6 +85,7 @@ $requests = mysqli_query($conn, $requests_sql);
 </head>
 <body>
     <h2>Welcome, <?php echo htmlspecialchars($user_name); ?>!</h2>
+
     <p><strong>Blood Type:</strong> <?php echo $blood_type; ?></p>
     <p><strong>Health Issues:</strong> <?php echo $health_issues; ?></p>
     <p><strong>Days Since Last Donation:</strong> <?php echo $days_since; ?></p>
@@ -96,7 +104,6 @@ $requests = mysqli_query($conn, $requests_sql);
         <input type="hidden" name="auto_request" value="1">
         <input type="submit" value="Send Blood Request">
     </form>
-
     <hr>
     <h3>Matching Blood Requests</h3>
     <?php if (mysqli_num_rows($requests) > 0): ?>
@@ -105,7 +112,26 @@ $requests = mysqli_query($conn, $requests_sql);
                 <p><strong>Patient:</strong> <?php echo $row['patient_name']; ?></p>
                 <p><strong>Contact:</strong> <?php echo $row['Phone_Number']; ?></p>
                 <p><strong>Requested On:</strong> <?php echo $row['Time_Stamp']; ?></p>
+                <?php if (isset($_GET['accepted_id']) && $_GET['accepted_id'] == $row['Request_ID']): ?>
+                    <p style="color: green; font-weight: bold;">✅ Request accepted successfully.</p>
+                <?php endif; ?>
+
+                <form action="accept_request.php" method="get" style="display:inline;">
+                    <input type="hidden" name="donor_id" value="<?= $user_id ?>">
+                    <input type="hidden" name="request_id" value="<?= $row['Request_ID'] ?>">
+                    <button type="submit">✅ Accept</button>
+
+                </form>
+
+                <form action="ignore_request.php" method="get" style="display:inline;">
+                    <input type="hidden" name="donor_id" value="<?= $user_id ?>">
+                    <input type="hidden" name="request_id" value="<?= $row['Request_ID'] ?>">
+                    <button type="submit">❌ Ignore</button>
+
+                </form>
+
             </div>
+            
         <?php endwhile; ?>
     <?php else: ?>
         <p>No matching blood requests found.</p>
