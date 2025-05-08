@@ -76,7 +76,31 @@ $requests_sql = "SELECT r.Request_ID, u.Name AS patient_name, u.Phone_Number, r.
 //                 JOIN Requested_Blood_Type b ON r.Request_ID = b.Request_ID
 //                 WHERE b.Blood_Type = '$blood_type' AND r.Patient_ID != $user_id ";
 $requests = mysqli_query($conn, $requests_sql);
+
+
+$approved_sql = "
+SELECT 
+    ec.Request_ID, 
+    ec.Donor_ID, 
+    br.Patient_ID,
+    donor.Name AS Donor_Name,
+    patient.Name AS Patient_Name,
+    staff.Name AS Staff_Name,
+    staff.Phone_Number AS Staff_Phone
+FROM Eligibility_Check ec
+JOIN Blood_Request br ON br.Request_ID = ec.Request_ID
+JOIN USER donor ON donor.ID = ec.Donor_ID
+JOIN USER patient ON patient.ID = br.Patient_ID
+LEFT JOIN USER staff ON staff.ID = ec.Approved_By
+WHERE ec.is_approved = 1
+  AND (ec.Donor_ID = $user_id OR br.Patient_ID = $user_id)
+ORDER BY ec.Request_ID DESC
+";
+$approved_requests = mysqli_query($conn, $approved_sql);
 ?>
+
+
+
 
 <!DOCTYPE html>
 <html>
@@ -129,6 +153,22 @@ $requests = mysqli_query($conn, $requests_sql);
                     <button type="submit">❌ Ignore</button>
 
                 </form>
+    h3>Approved Requests</h3>
+    <?php if (mysqli_num_rows($approved_requests) > 0): ?>
+        <?php while ($row = mysqli_fetch_assoc($approved_requests)): ?>
+            <div style="border: 1px solid #ccc; padding: 10px; margin: 8px;">
+                <p><strong>Patient:</strong> <?php echo $row['patient_name']; ?></p>
+                <p><strong>Contact:</strong> <?php echo $row['patient_phone']; ?></p>
+                <p><strong>Approved By:</strong> <?php echo $row['staff_name']; ?> (<?php echo $row['staff_phone']; ?>)</p>
+                <p><strong>Requested On:</strong> <?php echo $row['Time_Stamp']; ?></p>
+                <p style="color: green; font-weight: bold;">✅ Approved for donation.</p>
+            </div>
+        <?php endwhile; ?>
+    <?php else: ?>
+        <p>No approved donations yet.</p>
+    <?php endif; ?>
+
+                
 
             </div>
             
@@ -136,6 +176,10 @@ $requests = mysqli_query($conn, $requests_sql);
     <?php else: ?>
         <p>No matching blood requests found.</p>
     <?php endif; ?>
+
+    
+
+    
 </body>
 </html>
 

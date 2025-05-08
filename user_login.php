@@ -1,3 +1,5 @@
+//file: user_login.php
+
 <?php
 include 'database.php';
 session_start();
@@ -44,5 +46,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </form>
 
     <p>Don't have an account? <a href="user_register.php">Register here</a></p>
+    <p><a href="index.php">🏠 Back to Home</a></p>
 </body>
 </html>
