@@ -66,7 +66,7 @@ JOIN USER u ON ec.Donor_ID = u.ID
 JOIN Blood_Request br ON br.Request_ID = ec.Request_ID
 JOIN USER p ON br.Patient_ID = p.ID
 WHERE ec.is_accepted = 1 
-AND ec.is_approved = 1
+AND ec.is_eligible = 1
 AND NOT EXISTS (
     SELECT 1 FROM Donation_History dh 
     WHERE dh.Donor_ID = ec.Donor_ID
@@ -86,6 +86,12 @@ $result = mysqli_query($conn, $query);
     </style>
 </head>
 <body>
+<div style="text-align: center; margin-top: 20px;">
+    <a href="external_source.php" 
+       style="display: inline-block; padding: 10px 20px; background-color: #007BFF; color: white; text-decoration: none; border-radius: 5px;">
+        ➤ Go to External Source Dashboard
+    </a>
+</div>
     <h2 style="text-align:center;">Staff Dashboard - Pending Donor Approvals</h2>
 
     <table>
