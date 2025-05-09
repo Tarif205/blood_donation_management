@@ -1,4 +1,4 @@
-//File: donation_history.php
+//File: donation_history.php just for to show the donation history of the user
 
 <?php
 session_start();

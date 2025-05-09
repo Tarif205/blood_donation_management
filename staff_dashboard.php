@@ -65,7 +65,12 @@ FROM Eligibility_Check ec
 JOIN USER u ON ec.Donor_ID = u.ID
 JOIN Blood_Request br ON br.Request_ID = ec.Request_ID
 JOIN USER p ON br.Patient_ID = p.ID
-WHERE ec.is_accepted = 1 AND (ec.is_approved = 0 OR ec.is_approved IS NULL)
+WHERE ec.is_accepted = 1 
+AND ec.is_approved = 1
+AND NOT EXISTS (
+    SELECT 1 FROM Donation_History dh 
+    WHERE dh.Donor_ID = ec.Donor_ID
+)
 ";
 $result = mysqli_query($conn, $query);
 ?>
@@ -110,6 +115,12 @@ $result = mysqli_query($conn, $query);
                             <button type="submit" style="background:red; color:white;">Reject</button>
                         </form>
 
+                        <!-- New Donation Done button -->
+                        <form method="post" action="donation_done.php" style="display:inline;">
+                            <input type="hidden" name="request_id" value="<?= $row['Request_ID'] ?>">
+                            <input type="hidden" name="donor_id" value="<?= $row['Donor_ID'] ?>">
+                            <button type="submit" name="donation_done" style="background:blue; color:white;">Donation Done</button>
+                        </form>
                     </td>
                 </tr>
             <?php endwhile; ?>
