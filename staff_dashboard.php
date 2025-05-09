@@ -1,3 +1,5 @@
+//file: staff_dashboard.php
+
 <?php
 session_start();
 include 'database.php';
@@ -38,9 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['approve'])) {
     $patient_id = mysqli_fetch_assoc($info_result)['Patient_ID'];
 
     // Send notifications
-    $message = "✅ Your donation request #$request_id has been approved by Staff $staff_name (Phone: $staff_phone). Please contact staff for further steps.";
-    mysqli_query($conn, "INSERT INTO Notifications (user_id, message) VALUES ($donor_id, '$message')");
-    mysqli_query($conn, "INSERT INTO Notifications (user_id, message) VALUES ($patient_id, '$message')");
+// No need to insert notifications; info will be shown on dashboard dynamically
 }
 
 // 3. Reject request

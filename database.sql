@@ -86,6 +86,7 @@ CREATE TABLE Eligibility_Check (
   is_eligible BOOLEAN DEFAULT FALSE,
   is_accepted BOOLEAN DEFAULT FALSE,
     is_approved BOOLEAN DEFAULT FALSE,
+    Approved_By INT
   FOREIGN KEY (Donor_ID) REFERENCES USER(ID)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
@@ -94,7 +95,8 @@ CREATE TABLE Eligibility_Check (
     ON UPDATE CASCADE,
   FOREIGN KEY (Request_ID) REFERENCES Blood_Request(Request_ID)
     ON DELETE CASCADE
-    ON UPDATE CASCADE
+    ON UPDATE CASCADE,
+  FOREIGN KEY (Approved_By) REFERENCES USER(ID)
 );
 
 -- Sent Notification

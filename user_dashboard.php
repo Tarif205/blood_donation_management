@@ -1,15 +1,9 @@
-// FILE: user_dashboard.php
-
 <?php 
 include 'database.php';
 session_start();
+
 $status = $_GET['status'] ?? '';
-
-$flash_message = '';
-if ($status === 'accepted') {
-    $flash_message = '✅ Request accepted successfully.';
-}
-
+$flash_message = $status === 'accepted' ? '✅ Request accepted successfully.' : '';
 
 if (!isset($_SESSION['user_id'])) {
     header("Location: user_login.php");
@@ -70,123 +64,134 @@ $requests_sql = "SELECT r.Request_ID, u.Name AS patient_name, u.Phone_Number, r.
       )
     ORDER BY r.Time_Stamp DESC";
 
-// $requests_sql = "SELECT r.Request_ID, u.Name AS patient_name, u.Phone_Number, r.Time_Stamp
-//                 FROM Blood_Request r
-//                 JOIN USER u ON r.Patient_ID = u.ID
-//                 JOIN Requested_Blood_Type b ON r.Request_ID = b.Request_ID
-//                 WHERE b.Blood_Type = '$blood_type' AND r.Patient_ID != $user_id ";
 $requests = mysqli_query($conn, $requests_sql);
 
-
-$approved_sql = "
-SELECT 
+// Approved requests
+$approved_sql = "SELECT 
     ec.Request_ID, 
-    ec.Donor_ID, 
+    ec.Donor_ID,
     br.Patient_ID,
-    donor.Name AS Donor_Name,
-    patient.Name AS Patient_Name,
-    staff.Name AS Staff_Name,
-    staff.Phone_Number AS Staff_Phone
-FROM Eligibility_Check ec
-JOIN Blood_Request br ON br.Request_ID = ec.Request_ID
+    br.Time_Stamp,
+    donor.Name AS donor_name,
+    patient.Name AS patient_name,
+    patient.Phone_Number AS patient_phone,
+    staff.Name AS staff_name,
+    staff.Phone_Number AS staff_phone
+FROM Eligibility_Check ec 
+JOIN Blood_Request br ON br.Request_ID = ec.Request_ID 
 JOIN USER donor ON donor.ID = ec.Donor_ID
-JOIN USER patient ON patient.ID = br.Patient_ID
-LEFT JOIN USER staff ON staff.ID = ec.Approved_By
+JOIN USER patient ON patient.ID = br.Patient_ID 
+LEFT JOIN USER staff ON staff.ID = ec.Approved_By 
 WHERE ec.is_approved = 1
-  AND (ec.Donor_ID = $user_id OR br.Patient_ID = $user_id)
-ORDER BY ec.Request_ID DESC
-";
+  AND ec.Donor_ID = $user_id
+ORDER BY ec.Request_ID DESC";
+
 $approved_requests = mysqli_query($conn, $approved_sql);
 ?>
-
-
-
 
 <!DOCTYPE html>
 <html>
 <head>
     <title>User Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+        .info-box, .request-box {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        .approved {
+            background-color: #e6ffe6;
+        }
+        .btn {
+            padding: 5px 10px;
+            margin-right: 5px;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
+
     <h2>Welcome, <?php echo htmlspecialchars($user_name); ?>!</h2>
 
-    <p><strong>Blood Type:</strong> <?php echo $blood_type; ?></p>
-    <p><strong>Health Issues:</strong> <?php echo $health_issues; ?></p>
-    <p><strong>Days Since Last Donation:</strong> <?php echo $days_since; ?></p>
-    <p><a href="donation_history.php">View Donation History</a></p>
-    <p><a href="user_login.php">Logout</a></p>
+    <?php if ($flash_message): ?>
+        <p class="success"><?php echo $flash_message; ?></p>
+    <?php endif; ?>
 
-    <form method="post" style="margin-top: 10px;">
-        <p>
-            <label><strong>Availability:</strong></label>
-            <input type="submit" name="toggle_availability" value="<?php echo $is_available ? 'Mark as Unavailable' : 'Mark as Available'; ?>">
-            <span style="margin-left:10px;"><?php echo $is_available ? '✅ Available' : '❌ Unavailable'; ?></span>
-        </p>
-    </form>
+    <div class="info-box">
+        <p><strong>Blood Type:</strong> <?php echo htmlspecialchars($blood_type); ?></p>
+        <p><strong>Health Issues:</strong> <?php echo $health_issues; ?></p>
+        <p><strong>Days Since Last Donation:</strong> <?php echo $days_since; ?></p>
+        <p><a href="donation_history.php">View Donation History</a> | <a href="user_login.php">Logout</a></p>
 
-    <form action="blood_request.php" method="post" style="margin-top: 20px;">
+        <form method="post">
+            <p>
+                <strong>Availability:</strong>
+                <input type="submit" name="toggle_availability" value="<?php echo $is_available ? 'Mark as Unavailable' : 'Mark as Available'; ?>" class="btn">
+                <span><?php echo $is_available ? '✅ Available' : '❌ Unavailable'; ?></span>
+            </p>
+        </form>
+    </div>
+
+    <form action="blood_request.php" method="post">
         <input type="hidden" name="auto_request" value="1">
-        <input type="submit" value="Send Blood Request">
+        <input type="submit" value="Send Blood Request" class="btn">
     </form>
+
     <hr>
+
     <h3>Matching Blood Requests</h3>
     <?php if (mysqli_num_rows($requests) > 0): ?>
         <?php while ($row = mysqli_fetch_assoc($requests)): ?>
-            <div style="border: 1px solid #ccc; padding: 10px; margin: 8px;">
-                <p><strong>Patient:</strong> <?php echo $row['patient_name']; ?></p>
-                <p><strong>Contact:</strong> <?php echo $row['Phone_Number']; ?></p>
-                <p><strong>Requested On:</strong> <?php echo $row['Time_Stamp']; ?></p>
+            <div class="request-box">
+                <p><strong>Patient:</strong> <?php echo htmlspecialchars($row['patient_name']); ?></p>
+                <p><strong>Contact:</strong> <?php echo htmlspecialchars($row['Phone_Number']); ?></p>
+                <p><strong>Requested On:</strong> <?php echo htmlspecialchars($row['Time_Stamp']); ?></p>
+
                 <?php if (isset($_GET['accepted_id']) && $_GET['accepted_id'] == $row['Request_ID']): ?>
-                    <p style="color: green; font-weight: bold;">✅ Request accepted successfully.</p>
+                    <p class="success">✅ Request accepted successfully.</p>
                 <?php endif; ?>
 
                 <form action="accept_request.php" method="get" style="display:inline;">
-                    <input type="hidden" name="donor_id" value="<?= $user_id ?>">
-                    <input type="hidden" name="request_id" value="<?= $row['Request_ID'] ?>">
-                    <button type="submit">✅ Accept</button>
-
+                    <input type="hidden" name="donor_id" value="<?php echo $user_id; ?>">
+                    <input type="hidden" name="request_id" value="<?php echo $row['Request_ID']; ?>">
+                    <button type="submit" class="btn">✅ Accept</button>
                 </form>
 
                 <form action="ignore_request.php" method="get" style="display:inline;">
-                    <input type="hidden" name="donor_id" value="<?= $user_id ?>">
-                    <input type="hidden" name="request_id" value="<?= $row['Request_ID'] ?>">
-                    <button type="submit">❌ Ignore</button>
-
+                    <input type="hidden" name="donor_id" value="<?php echo $user_id; ?>">
+                    <input type="hidden" name="request_id" value="<?php echo $row['Request_ID']; ?>">
+                    <button type="submit" class="btn">❌ Ignore</button>
                 </form>
-    h3>Approved Requests</h3>
+            </div>
+        <?php endwhile; ?>
+    <?php else: ?>
+        <p>No matching blood requests found.</p>
+    <?php endif; ?>
+
+    <hr>
+
+    <h3>Approved Requests</h3>
     <?php if (mysqli_num_rows($approved_requests) > 0): ?>
         <?php while ($row = mysqli_fetch_assoc($approved_requests)): ?>
-            <div style="border: 1px solid #ccc; padding: 10px; margin: 8px;">
-                <p><strong>Patient:</strong> <?php echo $row['patient_name']; ?></p>
-                <p><strong>Contact:</strong> <?php echo $row['patient_phone']; ?></p>
-                <p><strong>Approved By:</strong> <?php echo $row['staff_name']; ?> (<?php echo $row['staff_phone']; ?>)</p>
-                <p><strong>Requested On:</strong> <?php echo $row['Time_Stamp']; ?></p>
-                <p style="color: green; font-weight: bold;">✅ Approved for donation.</p>
+            <div class="request-box approved">
+                <p><strong>Patient:</strong> <?php echo htmlspecialchars($row['patient_name'] ?? 'N/A'); ?></p>
+                <p><strong>Contact:</strong> <?php echo htmlspecialchars($row['patient_phone'] ?? 'N/A'); ?></p>
+                <p><strong>Approved By:</strong> <?php echo htmlspecialchars($row['staff_name'] ?? 'Staff N/A'); ?> (<?php echo htmlspecialchars($row['staff_phone'] ?? 'Phone N/A'); ?>)</p>
+                <p><strong>Requested On:</strong> <?php echo htmlspecialchars($row['Time_Stamp'] ?? 'Unknown'); ?></p>
+                <p class="success">✅ Approved for donation.</p>
             </div>
         <?php endwhile; ?>
     <?php else: ?>
         <p>No approved donations yet.</p>
     <?php endif; ?>
 
-                
-
-            </div>
-            
-        <?php endwhile; ?>
-    <?php else: ?>
-        <p>No matching blood requests found.</p>
-    <?php endif; ?>
-
-    
-
-    
 </body>
 </html>
-
-
-
-
-
-
-
-
