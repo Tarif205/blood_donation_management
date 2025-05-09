@@ -3,7 +3,13 @@
 <?php
 session_start();
 include 'database.php';
-
+//Show success messages
+$status = $_GET['status'] ?? '';
+if ($status === 'approved') {
+    echo "<p style='color:green; text-align:center;'>Request approved successfully.</p>";
+} elseif ($status === 'rejected') {
+    echo "<p style='color:red; text-align:center;'>Request rejected successfully.</p>";
+}
 // 1. Allow only staff
 if (!isset($_SESSION['is_staff']) || $_SESSION['is_staff'] != 1) {
     header("Location: index.php");
@@ -92,16 +98,18 @@ $result = mysqli_query($conn, $query);
                     <td><?= $row['Donor_Name'] ?></td>
                     <td><?= $row['Patient_Name'] ?></td>
                     <td>
-                        <form method="post" style="display:inline;">
+                        <form method="post" action="approve.php" style="display:inline;">
                             <input type="hidden" name="request_id" value="<?= $row['Request_ID'] ?>">
                             <input type="hidden" name="donor_id" value="<?= $row['Donor_ID'] ?>">
-                            <button type="submit" name="approve" style="background:green; color:white;">Approve</button>
+                            <button type="submit" style="background:green; color:white;">Approve</button>
                         </form>
-                        <form method="post" style="display:inline;">
+
+                        <form method="post" action="reject.php" style="display:inline;">
                             <input type="hidden" name="request_id" value="<?= $row['Request_ID'] ?>">
                             <input type="hidden" name="donor_id" value="<?= $row['Donor_ID'] ?>">
-                            <button type="submit" name="reject" style="background:red; color:white;">Reject</button>
+                            <button type="submit" style="background:red; color:white;">Reject</button>
                         </form>
+
                     </td>
                 </tr>
             <?php endwhile; ?>
