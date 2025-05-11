@@ -1,4 +1,3 @@
-//File: donation_history.php just for to show the donation history of the user
 
 <?php
 session_start();
@@ -27,11 +26,73 @@ $result = mysqli_query($conn, $sql);
 <head>
     <meta charset="UTF-8">
     <title>Donation History</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        h2 {
+            background-color: #e63946;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #e63946;
+            color: white;
+            font-size: 16px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f1f1f1;
+        }
+
+        tr:hover {
+            background-color: #f8d7da;
+        }
+
+        a {
+            display: inline-block;
+            text-align: center;
+            padding: 10px 20px;
+            background-color: #e63946;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        a:hover {
+            background-color: #d62828;
+        }
+    </style>
 </head>
 <body>
+
     <h2>Donation History for <?php echo htmlspecialchars($_SESSION['user_name']); ?></h2>
 
-    <table border="1">
+    <table>
         <thead>
             <tr>
                 <th>Donation ID</th>
@@ -59,6 +120,7 @@ $result = mysqli_query($conn, $sql);
     </table>
 
     <p><a href="user_dashboard.php">Back to Dashboard</a></p>
+
 </body>
 </html>
 

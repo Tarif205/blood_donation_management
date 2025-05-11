@@ -80,81 +80,117 @@ $requests_result = mysqli_query($conn, $requests_sql);
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>External Source Details</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
         }
-        
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
         .container {
             display: flex;
+            flex-wrap: wrap;
             gap: 20px;
         }
-        
-        .details-section, .requests-section {
-            flex: 1;
-            padding: 15px;
+
+        .card {
+            background-color: #fff;
             border: 1px solid #ddd;
-            border-radius: 5px;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            flex: 1;
+            min-width: 300px;
         }
-        
+
+        .card h2, .card h5 {
+            margin-top: 0;
+            color: #444;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            font-size: 12px;
+            border-radius: 12px;
+            color: #fff;
+            margin: 2px;
+        }
+
+        .badge.green { background-color: #28a745; }
+        .badge.red { background-color: #dc3545; }
+        .badge.gray { background-color: #6c757d; }
+
+        .alert {
+            background-color: #e7f3fe;
+            padding: 12px;
+            border-left: 4px solid #2196F3;
+            margin-bottom: 20px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
+            margin-top: 10px;
         }
-        
-        table, th, td {
+
+        th, td {
             border: 1px solid #ddd;
-            padding: 8px;
+            padding: 10px;
+            text-align: left;
         }
-        
+
         th {
             background-color: #f2f2f2;
         }
-        
-        .message {
-            padding: 10px;
-            margin-bottom: 15px;
-            background-color: #e6f7ff;
-            border-left: 4px solid #1890ff;
-        }
-        
-        .blood-type {
-            display: inline-block;
-            padding: 5px 10px;
-            margin: 5px;
-            background-color: #f8d7da;
-            border-radius: 3px;
-        }
-        
+
         button {
-            padding: 8px 12px;
-            background-color: #4CAF50;
+            padding: 6px 12px;
+            background-color: #007BFF;
             color: white;
             border: none;
+            border-radius: 4px;
             cursor: pointer;
         }
-        
+
         button:hover {
-            background-color: #45a049;
+            background-color: #0056b3;
+        }
+
+        a.back-link {
+            display: inline-block;
+            margin-top: 30px;
+            text-decoration: none;
+            color: #007BFF;
+        }
+
+        a.back-link:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
+
 <body>
     <h1>External Source Details</h1>
-    
+
     <?php if (!empty($message)): ?>
-        <div class="message"><?php echo $message; ?></div>
+        <div class="alert"><?php echo $message; ?></div>
     <?php endif; ?>
-    
+
     <div class="container">
-        <div class="details-section">
+        <!-- Source Information -->
+        <div class="card">
             <h2><?php echo htmlspecialchars($source['Name']); ?></h2>
-            
             <p><strong>Email:</strong> <?php echo htmlspecialchars($source['Email']); ?></p>
             <p><strong>Contact:</strong> <?php echo htmlspecialchars($source['Contact_Number']); ?></p>
             <p><strong>Address:</strong> 
@@ -163,56 +199,17 @@ $requests_result = mysqli_query($conn, $requests_sql);
                 <?php echo htmlspecialchars($source['City_Zip']); ?>
             </p>
             <p><strong>First Contacted:</strong> <?php echo htmlspecialchars($source['Date_Requested']); ?></p>
-            <p><strong>Status:</strong> <?php echo $source['Availability'] ? 'Available' : 'Unavailable'; ?></p>
-            
-            <h3>Blood Types Available:</h3>
-            <div>
-                <?php foreach ($blood_types as $type): ?>
-                    <span class="blood-type"><?php echo htmlspecialchars($type); ?></span>
-                <?php endforeach; ?>
-
-        
-        <div class="requests-section">
-            <h2>Matching Blood Requests</h2>
-            
-            <?php if (mysqli_num_rows($requests_result) > 0): ?>
-                <p>The following requests need blood types that this external source can provide:</p>
-                
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Request ID</th>
-                            <th>Patient</th>
-                            <th>Contact</th>
-                            <th>Blood Type</th>
-                            <th>Date</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php while ($req = mysqli_fetch_assoc($requests_result)): ?>
-                            <tr>
-                                <td><?php echo $req['Request_ID']; ?></td>
-                                <td><?php echo htmlspecialchars($req['Patient_Name']); ?></td>
-                                <td><?php echo htmlspecialchars($req['Patient_Phone_Number']); ?></td>
-                                <td><?php echo htmlspecialchars($req['Blood_Type']); ?></td>
-                                <td><?php echo htmlspecialchars($req['Time_Stamp']); ?></td>
-                                <td>
-                                    <form method="post">
-                                        <input type="hidden" name="request_id" value="<?php echo $req['Request_ID']; ?>">
-                                        <button type="submit" name="send_request">Contact Source</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        <?php endwhile; ?>
-                    </tbody>
-                </table>
-            <?php else: ?>
-                <p>No matching blood requests found that need this external source.</p>
-            <?php endif; ?>
+            <p><strong>Status:</strong> 
+                <span class="badge <?php echo $source['Availability'] ? 'green' : 'red'; ?>">
+                    <?php echo $source['Availability'] ? 'Available' : 'Unavailable'; ?>
+                </span>
+            </p>
+            <h5>Blood Types Available:</h5>
+            <?php foreach ($blood_types as $type): ?>
+                <span class="badge gray"><?php echo htmlspecialchars($type); ?></span>
+            <?php endforeach; ?>
         </div>
-    </div>
-    
-    <p><a href="external_source.php">Back to External Sources</a></p>
+
+    <a href="external_source.php" class="back-link">← Back to External Sources</a>
 </body>
 </html>

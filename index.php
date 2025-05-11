@@ -8,49 +8,64 @@
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 60px;
-            background-color: #f9f9f9;
+            background-color: #fff5f5;
+            margin: 0;
         }
 
         .container {
             display: inline-block;
-            padding: 30px;
-            border: 1px solid #ccc;
-            background: #fff;
-            border-radius: 12px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 40px 30px;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
         }
 
         h2 {
-            margin-bottom: 20px;
+            color: #d62828;
+            margin-bottom: 30px;
+            font-size: 24px;
         }
 
         .btn {
             display: block;
-            width: 200px;
-            padding: 10px;
-            margin: 10px auto;
+            width: 220px;
+            padding: 12px;
+            margin: 12px auto;
             font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
-            background-color: #007bff;
+            background-color: #e63946;
             color: white;
             border: none;
-            border-radius: 8px;
-            transition: background-color 0.3s;
+            border-radius: 10px;
+            transition: background-color 0.3s ease;
         }
 
         .btn:hover {
-            background-color: #0056b3;
+            background-color: #c1272d;
         }
 
         .link {
-            margin-top: 20px;
+            margin-top: 25px;
+            font-size: 15px;
+        }
+
+        a {
+            color: #e63946;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
+
     <div class="container">
-        <h2>Welcome to Blood Donation Management System</h2>
-        
+        <h2>🩸 Welcome to the Blood Donation Management System</h2>
+
         <form action="user_login.php" method="get">
             <button class="btn" type="submit">Login as User</button>
         </form>
@@ -60,8 +75,9 @@
         </form>
 
         <div class="link">
-            <p>New user? <a href="user_register.php">Register here</a></p>
+            <p>New donor? <a href="user_register.php">Register here</a></p>
         </div>
     </div>
+
 </body>
 </html>

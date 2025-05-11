@@ -43,68 +43,107 @@ $blood_types = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
     <title>External Sources Management</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
         }
-        
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
         .container {
             display: flex;
+            flex-wrap: wrap;
             gap: 20px;
         }
-        
+
         .form-section, .results-section {
             flex: 1;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            min-width: 300px;
         }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        table, th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-        
-        th {
-            background-color: #f2f2f2;
-        }
-        
-        .message {
-            padding: 10px;
-            margin-bottom: 15px;
-            background-color: #e6f7ff;
-            border-left: 4px solid #1890ff;
-        }
-        
+
         .form-group {
             margin-bottom: 15px;
         }
-        
+
         label {
             display: block;
             margin-bottom: 5px;
+            font-weight: 500;
         }
-        
-        input[type=text], input[type=email], select {
+
+        select {
             width: 100%;
             padding: 8px;
-            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
-        
+
         button {
-            padding: 10px 15px;
-            background-color: #4CAF50;
+            padding: 10px 16px;
+            background-color: #007BFF;
             color: white;
             border: none;
+            border-radius: 5px;
             cursor: pointer;
         }
-        
+
         button:hover {
-            background-color: #45a049;
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: 600;
+        }
+
+        .message {
+            background-color: #e7f3fe;
+            padding: 12px;
+            border-left: 4px solid #2196F3;
+            margin-bottom: 20px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        a.view-link button {
+            background-color: #28a745;
+        }
+
+        a.view-link button:hover {
+            background-color: #218838;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            text-decoration: none;
+            color: #007BFF;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
