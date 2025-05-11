@@ -110,6 +110,9 @@ $approved_requests = mysqli_query($conn, $approved_sql);
         <i class="fas fa-user-circle"></i>
     </div>
     </div>
+    <div class="dashboard-option">
+        <a href="donor_info.php" class="donor-info-button">View Approved Donor Information</a>
+    </div>
 
     <?php if ($flash_message): ?>
         <p class="success"><?php echo $flash_message; ?></p>

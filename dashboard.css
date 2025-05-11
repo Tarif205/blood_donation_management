@@ -247,3 +247,41 @@
 .user-icon i {
     color: #2d6a4f;
 }
+
+    /* Styling for the button */
+    .donor-info-button {
+        display: inline-block;
+        background-color: #c0392b; /* Blood red */
+        color: white;
+        font-size: 1.1rem;
+        padding: 12px 20px;
+        border-radius: 5px;
+        text-decoration: none;
+        text-align: center;
+        width: auto;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    /* Hover effect */
+    .donor-info-button:hover {
+        background-color: #e74c3c; /* Lighter red */
+        transform: scale(1.05);
+    }
+
+    /* Focus effect for accessibility */
+    .donor-info-button:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(255, 99, 71, 0.6); /* A subtle red shadow */
+    }
+
+    /* Optional: Add active state for when button is clicked */
+    .donor-info-button:active {
+        background-color: #c0392b; /* Original blood red */
+        transform: scale(0.98);
+    }
+
+    /* Add some margin to the button */
+    .dashboard-option {
+        margin: 20px 0;
+        text-align: center;
+    }
