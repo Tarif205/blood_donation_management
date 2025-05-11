@@ -125,6 +125,9 @@ $approved_requests = mysqli_query($conn, $approved_sql);
                 <a href="donation_history.php"><i class="fas fa-history"></i> View Donation History</a>
                 <a href="user_login.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
+            <form method="post" action="check_availability.php" style="margin-top: 20px;">
+                <input type="submit" value="Check Available Blood" class="btn">
+            </form>
 
             <form method="post">
                 <p>
