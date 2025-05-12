@@ -160,11 +160,15 @@ $blood_types = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
             <form method="post">
                 <div class="form-group">
                     <label for="blood_type">Blood Type:</label>
-                    <select id="blood_type" name="blood_type">
+                        <select id="blood_type" name="blood_type">
                         <?php foreach ($blood_types as $type): ?>
-                            <option value="<?php echo $type; ?>"><?php echo $type; ?></option>
-                        <?php endforeach; ?>
-                    </select>
+        <option value="<?php echo $type; ?>" <?php if (isset($_POST['blood_type']) && $_POST['blood_type'] === $type) echo 'selected'; ?>>
+        <?php echo $type; ?>
+        </option>
+        <?php endforeach; ?>
+        </select>
+
+
                 </div>
                 
                 <button type="submit" name="search">Search</button>

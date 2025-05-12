@@ -47,35 +47,6 @@ while ($row = mysqli_fetch_assoc($blood_result)) {
     $blood_types[] = $row['Blood_Type'];
 }
 
-// Handle request to external source
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['send_request'])) {
-    $request_id = intval($_POST['request_id']);
-    
-    // Update the request to indicate external source being used
-    $update_sql = "UPDATE Blood_Request SET Status = 'External Source Contacted' WHERE Request_ID = $request_id";
-    
-    if (mysqli_query($conn, $update_sql)) {
-        // You could add code here to send an actual email to the external source
-        $message = "External source has been contacted for Request #$request_id";
-    } else {
-        $message = "Error: " . mysqli_error($conn);
-    }
-}
-
-// Get pending requests that match this external source's blood types
-$requests_sql = "SELECT br.Request_ID, br.Patient_Name, br.Patient_Phone_Number, br.Time_Stamp, rbt.Blood_Type
-                FROM Blood_Request br
-                JOIN Requested_Blood_Type rbt ON br.Request_ID = rbt.Request_ID
-                WHERE br.Status = 'Pending' 
-                AND rbt.Blood_Type IN (
-                    SELECT Blood_Type FROM External_Source_Blood_Type 
-                    WHERE External_Source_ID = $source_id
-                )
-                AND NOT EXISTS (
-                    SELECT 1 FROM Eligibility_Check ec 
-                    WHERE ec.Request_ID = br.Request_ID AND ec.is_eligible = 1
-                )";
-$requests_result = mysqli_query($conn, $requests_sql);
 ?>
 
 <!DOCTYPE html>
@@ -154,19 +125,6 @@ $requests_result = mysqli_query($conn, $requests_sql);
             background-color: #f2f2f2;
         }
 
-        button {
-            padding: 6px 12px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
         a.back-link {
             display: inline-block;
             margin-top: 30px;
@@ -212,4 +170,5 @@ $requests_result = mysqli_query($conn, $requests_sql);
 
     <a href="external_source.php" class="back-link">← Back to External Sources</a>
 </body>
-</html>
+</html> 
+
